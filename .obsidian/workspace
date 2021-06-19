@@ -1,0 +1,94 @@
+{
+  "main": {
+    "id": "390d86c175637e1d",
+    "type": "split",
+    "children": [
+      {
+        "id": "adab38f16c2ebf85",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "machines/htb/sauna.md",
+            "mode": "preview"
+          }
+        }
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "a8001c8d3ff63b78",
+    "type": "split",
+    "children": [
+      {
+        "id": "2acf1676d6f27aed",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "21f6518dd9b82975",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {}
+            }
+          },
+          {
+            "id": "2d973fcc15ea9c4f",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "462845248635cadc",
+    "type": "split",
+    "children": [
+      {
+        "id": "e7ddfc922b3788ac",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "67821a694e8991ea",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "machines/htb/sauna.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "active": "adab38f16c2ebf85",
+  "lastOpenFiles": [
+    "machines/htb/sauna.md",
+    "machines/htb/pit.md"
+  ]
+}

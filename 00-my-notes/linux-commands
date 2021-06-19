@@ -1,0 +1,527 @@
+Linux Important Commands:
+========================
+System Management:
+	hostname => shows hostname
+		To change hostname:
+			leafpad /etc/hostname => edit hostname
+			leafpad /etc/hosts => edit hostname
+			reboot
+	uname -a => system details
+Shell Management:(terminal)
+	In kali, now zsh is used.
+	bash_shell:
+		~/.bashrc:
+			hidden file
+			responsible for maintaining shell environmentexport command is used to make env variables 
+		~/.bash_history => commands history file
+	zsh_shell:
+		~/.zshrc:
+			hidden file
+			responsible for maintaining shell environment
+	Enviroment variables:
+		Uses:
+			Bash scripting and automation
+		env:
+			env => shows environment variables
+			env -i /bin/sh => it creates a new env in a shell
+			env -u variable_name => to remove variable in a ENV file
+			env LOGG=/var/log => to create a new variable
+		$PATH variable:
+			example:
+				echo $PATH:
+					/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+			Tells terminal about where to look for commands you enter (such as cd/ls)
+		Making new environment variables:
+			export VAR="HELLO" => LOCAL variable
+			export lhost=4444 => LOCAL variable
+			export $VAR="HELLO" => GLOBAL variable
+			export $ip=10.10.16.12 => GLOBAL variable
+		echo $variable => print value of variable
+	Alias: 
+		string we define that replaces a command
+		alias yoyo='cat file.txt| grep -i name | sort -u'
+		unalias yoyo => delete alias
+		If we wanna make these changes permanent:
+			we need to set the alias in ~/.zshrc
+	History tricks:
+		history => shows history of Commands
+			example:
+				1.pwd
+				2.cd /home
+				3.ls
+		Repeating commands from history file:	
+			!! => repeat last command
+			!1 => repeat the 1st command in history file
+		reverse-i-search facility:
+			Allows us to search for a command in history file
+			Holding "ctrl" and pressinf "r", then typing in the command we are searching for.
+			Once found, press "enter" to execute it.
+		files:
+			.zsh_history => for zsh shell
+			.bash_history => for bash shell
+		Enviroment Vvariables related to history:
+			HISTSIZE => controls the number of commands stored in memory for the current session
+			HISTFILESIZE => controls how many commands are kept in the history file
+			HISTCONTROL => controls whether or not to remove duplicate commands
+				export HISTCONTROL=ignoredups
+Text Management:
+	Piping and Redirection:
+		Data Streams:
+			STDIN:(0)
+				standard input
+				data fed into program
+			STDOUT:(1)
+				standard output
+				ouput from the program
+			STDERR:(2)
+				standard error
+				error messages from the program
+			storing some error:
+				cat /home/non-existing-file 2>error.txt
+		Piping:
+			using "|"
+			it pases output of prog-1 as input to prog-2
+		Redirection:
+			using ">":
+				to save output of some prog to a new file
+			using ">>":
+				to save output of some prog to an existing file
+			using "<":
+				to pass input from a file to a prog
+				example:
+					wc -m < file.txt
+	fmt:
+		fmt by default puts all words of all lines in a single line and prints on stdout
+		fmt file.txt
+		fmt -w 10 file.txt => puts onyl 10 chars per line
+	tee:
+		its used to live write STDOUT from console to a file
+		ffuf -u https://site.com/FUZZ -w wordlist.txt -s | tee ./output.txt
+		Q. "ffuf -u https://site.com/FUZZ -w wordlist.txt -s >> output.txt" will also write output, then why to use "tee":
+			Using ">>" will only write output, but wont show any ouput on the console, Whereas "tee" will both write output and also show it on the console.
+			The purpose of tee is to produce a one input, multiple output scenario - just like in a 'T' crossing.
+	echo:
+		used to print some string
+		-e => to interpret escaped characters
+			\b => backspace
+				hello \bworld => helloworld
+			\n => new line
+			\t => tab
+			\<any special char> => <any special char>
+				\" => "
+	cat:
+		cat < file to copy > file in which to copy text
+		cat file | uniq
+		cat file | uniq -c => print number of occurences also
+		cat file | uniq -d => print only duplicate enteries
+	head:
+		head file.log => show 1st 10 lines of a file.log
+		head -20 file.log => show 1st 20 lines of a file.log
+	tail:
+		tail file.log
+		tail -20 file.log
+		flags:
+			-f => follow => live files
+			-nx => show last nth lines
+	less:
+		less file.log
+		Note:
+			in bottom left of screen in which "less" has highlighted the path to the file, If we press forward slash (/) , less will let us search for terms in the file. For example
+				/hello will show us for lines having "hello" in them
+	join:
+		join file1 file2
+		Its used to join 2 files, for example, in bug_hunting/wordlists
+	split:
+		Split command in Linux is used to split large files into smaller files. It splits the files into 1000 lines per file(by default)
+		split file.txt
+		split -l x file.txt => split by x lines
+	grep:
+		grep "is" file.txt => it includes is/this/kiss/his/*is
+		grep -iw "is" file.txt => only "is"
+		grep -i hello file.txt => it will show hello/Hello/HEllo/hello/........
+		grep -c "is" file => counts the occurence of "is"
+		grep -v "abcd" => do not select abcd
+		grep -e -hello file.txt:
+			-e => Allows to use a ‘-‘ sign in the beginning of the pattern. If not mentioned the shell tries to execute the pattern as an option and returns an error. 
+		regular expressions:
+			grep -o '[^/]*\.megacorpone\.com'
+				^/ => to negate / => to not include /
+				[^/]* => to search for any number of characters(*), not including a forward-slash
+				\. => it means we are looking for '.'
+				meaning => anything.megacorpone.com
+			[^/,"]*
+				^/.," => to not include  / . , "
+				[^/,"]* => anything not having / . , "
+		egrep:(grep -E)(Extended grep)
+			egrep command used mainly due to the fact that it is faster than the grep command.
+		fgrep:(grep -F)(Fixed grep)
+			fgrep is useful when you need to search for strings which contain lots of regular expression metacharacters, such as "$", "^", etc. By specifying that your search string contains fixed characters, you don't need to escape each of them with a backslash.
+		rgrep:(grep -r)(Recursive grep)
+			rgrep can recursively descend through directories as it greps for the specified pattern.
+	sed:(Stream Editor)
+		p=> print
+		d=> delete
+		s=> substitute/replace
+		Printing line:
+			sed -n ‘N’p file => to print Nth line
+			sed -n /PATTERN/p file => print lines having PATTERN
+			sed -n ‘/PATTERN/,Np’ file => print from line matching PATTERN to Nth line
+			sed -n ‘/P1/,/P2/p’ file => print from line matching P1 to line matching P2
+		sed ‘Nd’ file => delete Nth line
+		Substituting a word:
+			sed 's/old/new/' file => replace first occurence of old word with new word
+			sed 's/old/new/g' file => replace all occurences of old word with new word
+			sed 's/old/new/n' file => replace nth occurence of old word with new word
+	cut:
+		cut -c 4 file.txt => show 4th element of each line
+		cut -f 2 -d "." file.txt => show 2nd field of each line. A field, here is seperated by a "."
+			-c => 
+			-d => delimeter
+			-f x => shhw field no. x
+	awk:
+		Its a programming language for text processing
+		-F "X" => delimeter(by default whitespace)
+			delimeter divides every line in $n variables.
+		print => print the following thing
+		awk -F "::" '{print $2, $5}' file => print 2nd & 5th variable of each line
+		awk '$1 >200' file => print where 1st variable is more than 200
+		awk '$1~/abcd/' file => print where 1st variable is equal to abcd
+		awk 'BEGIN {actions;}
+		>{ACTION;} # Action for everyline in a file
+		>END {Actions;
+		>}' file
+			BEGIN Actions are executed before reading the input
+			END actions are executed after reading the input
+			example:
+				awk 'BEGIN {print "a\tb";} # it prints a (tab) b
+				 > {print $2,"\t",$3,"\t",$4,"\t",$NF;}
+				 > END{print "Report Generated\n--------------";
+				 > }' employee.txt
+	tr:
+		Search and replace
+		cat file.txt | tr '3' '5' > new_file.txt => replace all "3" with "5"
+		cat file.txt | tr '[A-Z]' '[a-z]' > new_file.txt => uppercase to lowercase
+	sort:
+		sort file.txt
+		-r => reverse
+		-n => numerical sort
+		-f => case insensitive
+	Comparing text files:
+		comm:
+			3 columns: 
+				1st => lines unique to 1st file
+				2nd => lines unique to 2nd file
+				3rd => lines common in both files
+		diff:
+			diff formatflag a.txt b.txt
+			-c => context format => expanded result
+			-u => unified format => short result
+				- => line appeared in 1st file only
+				+ => line appeared in 2nd file only
+	nl: 
+		nl file.txt => shows lines along with index number
+	wc:
+		wc file => wordcount
+		wc -l file => line count
+	Text editors:
+		nano file_name:
+			ctrl + o => save changes to a file
+			ctrl + k => cut current line
+			ctrl + u => paste line 
+			ctrl + w => search
+			ctrl + x => exit
+		vim file_name:
+			/query_string => as soon as we open vim, we can use a forward slash (/) to find something which we wanna edit.
+			once found, we press "ENTER" to move cursor there.
+			i => press "i" to enable insert mode (edit mode)
+			once insterted, press "ESC"
+			:wq! => write and quit (save changes)
+			:q! => dont save changes
+			Better syntax based info:
+				i => to enter insert mode
+				Esc => exit from insert mode and enter command mode
+				command mode:
+					/query => to search for "query"
+					dd => delete current line
+					x => delete current character
+					yy => copy current line
+					p => paste clipboard contents
+					:w => write changes
+					:q! => quit without writing changes
+					:wq => duit and write changes
+User Management:
+	who => Displays all users logged on the system
+	id:
+		uid => user id
+		gid => group id
+	adduser user_name => unprivileged user
+	adduser user_name sudo => sudoer (users who can use sudo, aka sudoers)
+	deluser user_name
+	deluser -r user_name => to delete all files related to user as well
+	sudo -l => list all allowed and forbidden commands for the user.
+File Management:
+	~/ => this means HOME directory (same as /home)
+	locate filename:
+		quickest way to find file and directories
+		updatedb => to update location of files and directories
+	which binary_name:
+		which is better than locate to find binaries (tools) as it only shows one occurence of that binary
+		which command searched through directories defined in $PATH variable
+	whatis binary_name => gives info about some binary/tool along with its location and man page
+	accesing files having space in their name:
+		filename => access control.txt
+			access\ control.txt
+			'access control.txt'
+	File Permissions and ownership:
+		basics:	
+			Numerical conversion table:
+				octal     0   6    4     0 
+				binary   000 110  100   000
+				symbolic sst rwx  rwx   rwx
+				meaning	 spl user group other users
+			ls -la:
+				drwxrwxrwx
+			special attribute:
+				s => SUID(1st s)
+				s => SGID(2ns s)
+				t => STICKY BIT
+			symbols:
+				u => user
+				g => group
+				o => others
+				a => all
+			Q. find octal for only SUID file
+				S-- --- --- ---
+				100 000 000 000
+				octal for 100(binary) => 4
+				answer => 4000
+			Q. find octal for file readable by everyone
+				r--r--r--
+				100100100
+				octal for 100(binary) => 4 
+				answer => 444 (or 0444)
+			SUID files:(Set User Id)
+				its a file permission which is added to files(binaries) which are allowed to run by unprivileged user but it runs under the name of its owner
+				Last bit, i.e. x becomes s
+			SGID:(set group id)
+				for files:
+					these files are executed under the name of group owner
+				for directories:
+					files created in such a directory gets same group owner
+				Last bit, i.e. x becomes s
+			STICY BIT:
+				files:
+					no meaning
+				directory:
+					files created in such a directory can only be deleted by owner
+				Last bit, i.e. x becomes t
+		chmod:(changing permission)
+			alphabetical notation:(uses rwx)
+				chmod +x file_name
+					+ => add
+					- => remove
+			numerical notation:
+				chmod 777 file_name
+			ugo notation:
+				chmod u+r file_name
+					a<symbol>b:
+						a => u/o/g (user/owner/group)
+						symbol => +/-/=
+						b => r/w/x
+		File Ownership:
+			chown user_name file_name => change ownership of file to user
+			chgrp group_name file_name => change group ownership of file to group
+	find command: to find files and directories
+		find /dir options
+		find ~ options => here "directory" is HOME
+		options:
+			-type f => files
+			-type d => directory
+			-name "*.bin" or -name *.bin
+				-name ".*" => hidden file
+			-iname => ignore case
+			-not -name "name" => other files than "name"
+			-user=username (owner of file)
+			-size n
+				n => exact n size
+				+n => more than n
+				-n => less than n 
+				suffix for n:
+					c => bytes
+					k => kb
+					M => mb
+			-empty => zero byte size files
+			-perm
+				octal form:
+					read basics->file_permissions
+					-444 => users having 444 permission or more
+					/444 => users having 444 permission or less
+				symbolic form:
+					-o/u/g=x/w/r/s
+						s => suid
+			time related:
+				-min => minutes (convert hours to minutes)
+				-time => days
+				prefix for min and times:
+					a => accessed
+					m => modified
+					c => status changed
+				-amin +30 => file accessed more than 30 mins ago
+				-mtime -7 => file accessed less than 7 days ago
+			depth related:
+				root is '1', sub-dir is '2' and so-on
+				-maxdepth x => maximum depth 
+				-mindepth x =. minimum depth
+		use of find in privesc:
+			-exec command {} \; => execute command
+		find / -perm -4000 -print 2>/dev/null => to find all SUID files
+		NOTE: 2>/dev/null => Redirecting the error messages to /dev/null, it can be used in every command to dont show any errors
+	ls:
+		ls => list
+		ls -lt => list by last modified
+		ls -ltr => list by last modified reverse order
+		ls -la => show files with permisiions, also shows hidden files
+	rm:
+		rmdir abcd => if abcd is empty
+		rm -rf /abcd => deletes directory + files
+	touch filename => create a new file
+	Archive Management:
+		.gz:
+			gzip file1 file2 => create .gz
+			gunzip abcd.gz => unzip abcd.gz
+		.tar:
+			tar -cvf abcd.tar file1 file2 => create abcd.tar
+			tar -xvf abcd => unzip abcd
+				flags:
+					-c => create
+					-x => extract
+					-v => verbose
+					-f => write the following file
+		.tar.gz:
+			tar -czf abcd.tar.gz file1 file2 => create abcd.tar.gz
+			tar -xzf abcd => unzip abcd
+		.bz2:
+			bzip2 file1 file2 => create .bz2
+			bunzip2 abcd.bz2 => extract abcd.bz2
+		.zip:
+			zip abcd => zip files
+			unzip abcd => unzip abcdssss
+			7z: it helps with password protected archives
+				7z x filename
+	Downloading Files:
+		wget: HTTP/HTTPS/FTP
+			wget <link> => to download a file
+				-O new_filename => save with some other name
+				-b => to download in background
+				ftp:
+					wget -m ftp://username:password@ip
+		axel: FTP/HTTP
+			axel -a -n 20 -o filename link
+				-a => show progess
+				-n x => use x number of connections
+		curl: see web_pentesting sheet
+Network Management:
+	ifconfig => network cards
+	iwconfig => wifi network cards
+	netstat -antp => running services
+	netstat -ano => what ports are open
+	iptables: Linux Firewall
+		it has 4 tables: filter|nat|mangle|raw
+		iptables -L => show active rules
+		iptables -t <table_name> --list => to see the rules
+		iptables --flush => delete all the rules
+		iptables -t <table_name> --list => to see the rules
+		iptables --flush => delete all the rules
+		iptables -P INPUT DROP => change policy of INPUT chain to DROP
+		iptables -P INPUT ACCEPT => change policy of INPUT chain to ACCEPT
+		iptables -A INPUT -s ip -j DROP -i eth0 -p tcp	
+		options:
+			-P => policy name (INPUT|OUTPUT|FORWARD)
+			-A => append a new rule
+			-I => add a rule in starting
+			-D => delete a rule
+			-F => delete all rules
+			-s => source ip
+			-d => destination ip
+			-j => action (accept/drop/queue/return)
+			-i => INPUT interface
+			-o => OUTPUT interface
+			--dport => destinationport (INPUT)
+			--sport => sourceport (OUTPUT)
+			-p => protocol (tcp|udp|icmp)
+		Note: all changes takes place for only one reboot. To make the rules PERMANENT => sudo /sbin/iptables-save
+	route -n => find gateway
+	ip a => same as ifconfig
+	ip route => routing table
+	ip neigh => arp table
+Task Management:(Scheduled Tasks)
+	cron:
+		ls | grep cron => there are many cron scripts as follows:
+			cron.d
+			cron.daily
+			cron.hourly
+			cron.monthly
+			crontab
+			cron.weekly
+		etc/crontab => cron configuration file
+			tabs:
+				MIN  minute field
+				HOUR hour 
+				DOM day of month
+				MON month
+				DOW day of week
+				CMD command to be executed
+				note: time field is of 24 hours
+Disk Management:
+	mount:
+		mount => shows all the mounts
+		mount /dev/usb0 /mnt/1234 => mount /dev/usb0
+			/dev/usb0 is usb and /mnt/1234 is mount directory
+		mouting network shares:
+			mkdir /mnt/mount
+			mount ip:/mount_name /mnt/mount => we mounted the mount to /mnt/mount
+			cd /mnt/mount
+		umount /mnt => to unmount
+		umount -f /mnt =>forceful unmount (its done when device is busy)
+	partitions
+		>parted:
+			select /dev/sdb => chose harddisk
+			print => display all the partitions
+			mkpart primary start_point end_point => to create primary partition
+				ex: mkpart primary 100 16719 (both points are in Mb)
+			mkpart logical start end => to create logical partition
+			mkpartfs logical fat32 start end => to creete logical partition with a specific filesystem
+			(note: its "mkpartfs" not "mkpart")
+			set partition_no boot on => to enable boot on a given partition
+			resize partition_no => resize partition
+			cp from_part_no to_part_no => copy files b/w partitions
+			rm partition_no => remove partition
+	dd:
+		to convert and copy files
+		dd if=input_file of=output_file
+Service Management:
+	systemctl enable|stop|start|status <service>
+	service <service> start|stop|restart
+Process Management:
+	Basics:
+		Every process has a pid
+		one or more process make a job
+	ps aux => show all processes
+		ps => process status
+	top => real-time process like taskmanager
+	kill pid => kill process with given pid
+	Background and foreground:
+		fg:(foreground process)
+			when we run a command in terminal and the terminal is occupied and no other commands can be executed until the current one finishes
+		bg:(background process)
+			The quickest way to background a process is to append an ampersand (&) to the end of the command	
+		ctrl + z => suspends the job
+		jobs => to see index of suspended files
+		bg %1 => resume the suspended job index 1 in background 
+		fg %1 => resume the suspended job index 1 in foreground
+Package Management:
+	apt-cache search pkg_name => it will show all packages installed/not having <text> in their description
+	apt-get remove pkg_name => uninstall that package
+	apt-get purge pkg_name => uninstall the package along with its necessary packages
+Sharing a disk drive in kali VM:
+	https://unix.stackexchange.com/questions/594080/where-to-find-the-shared-folder-in-kali-linux 

@@ -1,0 +1,153 @@
+Networking:
+==========
+OSI MODEL:
+	layer7=> Application => HTTP/SMTP
+	layer6=> Presentation => media files(mov/jpeg)
+	layer5=> Session => session management
+	layer4=> Transport => TCP/UDP
+	layer3=> Network => router => ip
+	layer2=> Data => physical => switches communicate over physical adress
+	layer1=> Physical => data cables
+TCP header:
+    0                   1                   2                   3   
+    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |          Source Port          |       Destination Port        |(16+16)
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |                        Sequence Number                        |(32)
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |                    Acknowledgment Number                      |(32)
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |  Data |       |C|E|U|A|P|R|S|F|                               |
+    | Offset|  Res. |W|C|R|C|S|S|Y|I|            Window             |(4+6+6+16)
+    |       |       |R|E|G|K|H|T|N|N|                               |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |           Checksum            |         Urgent Pointer        |(16+16)
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |                    Options                    |    Padding    |()
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |                             data                              |(32)
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	TCP flags:(14th byte)
+		they are used within TCP packet to indicate a particular connection state or provide additional information. Therefore, they can be used for troubleshooting purposes or to control how a particular connection is handled. TCP flags are defined in the 14th byte of the TCP header and are of 16 bits.Each TCP flag is 1 bit in size.
+		commonly used => SYN/ACK/FIN.
+		1.SYN => synchronisation flag, first step in establishing a 3-way handshake between two hosts. Only the first packet from both the sender and receiver will have this flag set.
+		2.ACK => acknowledgment flag, used to acknowledge successful receipt of packet. receiver sends both ACK and SYN in second step of the 3-way handshake process to tell the sender that it received its initial packet. All packets sent and received after the initial 3-way handshake will have the ACK flag set.
+		3.FIN => finished flag, means that there is no more data from the sender. Therefore, it is used in the last packet sent from the sender.
+		4.URG => urgent flag, used to notify receiver to process the urgent packets before processing any other packet.
+		5.PSH => push flag, its similar to URG flag. it tells receiver to process these packets as they are received instead of buffering them.
+		6.RST => reset flag, it gets sent from receiver to sender when a packet is sent to a particular host that was not expecting it.
+		Extra flags:
+		ECE => This flag is responsible for indicating if the TCP peer is ECN capable.
+		CWR => 'congestion window reduced' flag, its used by sender to indicate that it received a packet with the ECE flag set.
+		NS => 'nonce sum' flag, its used to protect against accidental malicious concealment of packets from the sender.
+		For TCP headers with a single flag, there is one byte per bit and byte 13 contains the following binary values in decimal:
+			Final (FIN) = 1
+			Sync (SYN) = 2
+			Reset (RST) = 4
+			Push (PSH) = 8
+			Acknowledgement (ACK) = 16
+			Urgent (URG) = 32
+			Reserved = 64 and 128 (should be zero)
+		If multiple flags are set for the TCP header, the value of byte 13 is the binary sum of the values for all the bits that are set. For example:
+			FIN, ACK = 17 (1 + 16)
+			SYN, ACK = 18 (2 + 16)
+			PSH, ACK = 24 (8 + 16)
+			FIN, PSH = 9 (1 + 8)
+			FIN, PSH, ACK = 25 (1 + 8 + 16)	
+Mac address:
+	xx:xx:xx:xx:xx:xx
+	1st 3 pairs => identifers
+	google=> mac address lookup
+ifconfig output:
+	inet=> ipv4
+	inet6=> ipv6
+	ether=> Mac address
+	netmask=> subnet mask => TELL COMPUTER HOW MANY IPS WE CAN HAVE
+	broadcast=> last ip
+	network id=> first ip
+Important Ports:
+	TCP:
+		21 => FTP
+		22 => SSH => ENCRYPTED version of TELNET
+		23 => TELNET => LOGIN INTO A MACHINE REMOTELY
+		25 => SMTP => mail
+		53 => DNS => ip to hostname
+		80 => HTTP
+		443 => HTTPS
+		110 => POP3 => mail
+		139+445 => SMB => file sharing => SAMBA
+		143 => IMAP => mail
+	UDP:
+		53 => DNS
+		67+68 => DHCP
+		69 => TFTP
+		161 => SNMP
+	GOOGLE=>
+		telnet v/s ssh
+		imap vs pop3 vs smtp
+	NOTE: DNS is present in both TCP & UDP
+Private ip:
+	class A => 10.0.0.0 to 10.255.255.255
+	class B => 172.16.0.0 to 172.31.255.255
+	class C => 192.168.0.0 to 192.168.255.255
+Subnetting:
+	why is subnetting important?
+		we can figure total hosts
+		we can figure out ip range/broadcast_ip/subnet_mask
+		in pentest, we are given scopes like 158.32.2.8/29
+	MAIN:
+		255 => 1 1 1 1 1 1 1 1 -> 8 bits
+		(255 = 128+64+32+16+8+4+2+1)
+		"255" is actually "256" as couting in computers starts from '0'
+		Also, 256 = 2^8
+			how? every bit has 2 outcomes 0 & 1, so, total outcomes of 8 bits => 2^8 = 256
+	Insider notation:
+		In a class C Private ip: 192.168.134.something
+			'192.168.134' is fixed
+			netmask=> 255.255.255.0
+				'0' indicates 256 possibilites(0 to 255) in 'something'
+				'255' indicates that the part where it is present is fixed in the ip_address, ie, it cant be changed
+				in,   255.255.255.0
+				       8   8   8  0 => 24 bits
+				 	so, it is also known as "/24 network"(insider notation)
+		In a class B Private ip: 
+			netmask=> 255.255.0.0
+				       8   8  0 0 => 16 bit
+				so, it is also known as /16 network
+		In a class A Private ip: 
+			netmask=> 255.0.0.0
+				       8  0 0 0 => 8 bit
+				so, it is also known as /8 network
+		In 255.225.224.0:
+			for 255 => 1 1 1 1 1 1 1 1 (8 "1" bits)
+			for 254:
+				we know 255 = 128+64+32+16+8+4+2+1
+						255 =  1  1  1  1  1 1 1 1 => 8 bits
+				RULE: we need to start making '0' "from LEFT to RIGHT"
+				we know 254 = 128+64+32+0+0+0+0+0
+						254 =  1  1  1  0 0 0 0 0
+		so, we can say that:
+		netmask= 11111111.11111111.1110000.00000000
+		total no of 1's => 19
+		SO, IT IS CALLED A "/19 NETWORK"
+		search for file saved as "subnetting.xlsx", in it:
+			/x means a subnet having 'x' no of 1's
+			/8 => it has subnet of 255 => 255.0.0.0
+			/9 => 255.18.0.0
+			/24 => 255.255.255.0
+			/25 => 255.255.255.128
+			to calculate toal no of hosts =>
+				website: jodies.net
+			usuable hosts => total hosts - 2:
+				First ip => 192.168.1.0 => reserved as network ID
+				last ip => 192.168.0.255 => reserved for BROADCAST ip
+		EXAMPLE (V.IMP) => 158.32.2.8/29:
+			Total hosts => 8
+			usable hosts per net => 6
+			Network ID => 158.32.2.8
+			Broadcast ip => 158.32.2.16
+			1st usable ip => 158.32.2.9
+			last usable ip => 158.32.2.15
+
+            
