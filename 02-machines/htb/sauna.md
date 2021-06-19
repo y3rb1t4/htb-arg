@@ -4,6 +4,8 @@
 <span style="display:block;text-align:center">![Sauna](./images/10.10.10.175-machine.png)"</span>
 
 
+<br/><br/>
+
 ## Sinopsis:
 
 La maquina Sauna es una pagina que contiene la informacion de un banco.En lo q respecta a pentesting web en la intruccion, tiene un nivel facil dado que en una de sus rutas deja a la vista a posibles nombres de usuario que forman parte del comite ejecutivo del banco. Se complica un poco la parte de la escalada de privilegios al tener q usar tecnologia de kerberos y base de datos para obtener el usuario Administrator del sistema.
@@ -20,6 +22,11 @@ La maquina Sauna es una pagina que contiene la informacion de un banco.En lo q r
   <li>Bloodhound</li>
   <li>Escalacion de privilegios en windows con Power Shell</li>
 </ul>
+
+
+<br/><br/>
+
+# Reconocimiento de Puertos 
 
 ```bash
 🧉
