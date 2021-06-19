@@ -1,8 +1,8 @@
-# Sauna
+# Machine Sauna (10.10.10.175)
 
-![Sauna](./images/10.10.10.175-machine.png)
 
-bueno esta plataforma tiene una dificultad media para
+<span style="display:block;text-align:center">![Sauna](./images/10.10.10.175-machine.png)"</span>
+
 
 ## Sinopsis:
 
