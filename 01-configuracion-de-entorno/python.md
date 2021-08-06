@@ -140,10 +140,10 @@ libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm \
 libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
 ```
 
-ahora paso a instalar las otras terminales 
+ahora paso a clonar el repo  y lo bajo en el home directory
 
 ```bash
-q
+git clone https://github.com/pyenv/pyenv.git ~/.pyenv
 
 ```
 
@@ -153,11 +153,11 @@ Configura el entorno de tu shell para Pyenv
 Previamente procedemos agregar las variables a la .zshrc
 
 ```bash
-echo 'export PYENV\_ROOT="$HOME/.pyenv"' \>> ~/.zshrc
+echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.zshrc
 
-echo 'export PATH="$PYENV\_ROOT/bin:$PATH"' \>> ~/.zshrc
+echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.zshrc
 
-echo 'eval "$(pyenv init --path)"' \>> ~/.zshrc
+echo 'eval "$(pyenv init --path)"' >> ~/.zshrc
 
 ```
 
@@ -209,7 +209,18 @@ https://github.com/pyenv/pyenv-virtualenv
 git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv
 ```
 
+```bash
+echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.zshrc
+```
 
+Ahora vemos que version de pyenv tengo instalada 
 
+```bash
+➜  ~ pyenv version
+system (set by /home/kali/.pyenv/version)
+```
 
+```
+pyenv install --list
+```
 
