@@ -224,3 +224,7 @@ system (set by /home/kali/.pyenv/version)
 pyenv install --list
 ```
 
+```bash
+pyenv virtualenv 3.8.10 HTB
+```
+
