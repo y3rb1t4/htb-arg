@@ -1,7 +1,7 @@
 
 cURL - Post Request
 
-
+https://medium.com/@harry.hphu/hackthebox-hacking-wordpress-skill-assessment-758e0e81648b
 
 ```bash
 
